@@ -32,7 +32,7 @@ type codeDeployReturn struct {
     DeploymentGroupName string `json:"deploymentGroupName,omitempty"`
     Status              string `json:"status,omitempty"`
     InstanceId          string `json:"instanceId,omitempty"`
-    InstanceStatus		string `json:"instanceStatus,omitempty"`
+    instanceStatus      string `json:"instanceStatus,omitempty"`
     Url                 string
     // ErrorInformation    string `json:"errorInformation"`
 }
