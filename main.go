@@ -27,9 +27,10 @@ type LineInfo struct {
 type codeDeployReturn struct {
     EventTriggerName    string `json:"eventTriggerName"`
     DeploymentId        string `json:"deploymentId"`
-    ApplicationName     string `json:"applicationName"`
-    DeploymentGroupName string `json:"deploymentGroupName"`
-    Status              string `json:"status,omitempty"`
+    ApplicationName     string `json:"applicationName, omitempty"`
+    DeploymentGroupName string `json:"deploymentGroupName, omitempty"`
+    Status              string `json:"status, omitempty"`
+    InstanceStatus		string `json:instanceStatus, omitempty`
     // ErrorInformation    string `json:"errorInformation"`
 }
 
