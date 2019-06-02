@@ -1,0 +1,9 @@
+version: 0.0
+Resources:
+    - mylambdafunction:
+        Type: AWS::Lambda::Function
+        Properties:
+            Name: "happyNotify"
+            Alias: "staging"
+            CurrentVersion: "1"
+            TargetVersion: "2"

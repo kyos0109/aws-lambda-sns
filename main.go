@@ -25,12 +25,15 @@ type LineInfo struct {
 }
 
 type codeDeployReturn struct {
+    Region              *string `json:"region,omitempty"`
     EventTriggerName    string `json:"eventTriggerName"`
     DeploymentId        string `json:"deploymentId"`
-    ApplicationName     string `json:"applicationName, omitempty"`
-    DeploymentGroupName string `json:"deploymentGroupName, omitempty"`
-    Status              string `json:"status, omitempty"`
-    InstanceStatus		string `json:instanceStatus, omitempty`
+    ApplicationName     string `json:"applicationName,omitempty"`
+    DeploymentGroupName string `json:"deploymentGroupName,omitempty"`
+    Status              string `json:"status,omitempty"`
+    InstanceId          string `json:"instanceId,omitempty"`
+    InstanceStatus		string `json:"instanceStatus,omitempty"`
+    Url                 string
     // ErrorInformation    string `json:"errorInformation"`
 }
 
@@ -41,14 +44,15 @@ func main() {
 
 func handler(ctx context.Context, snsEvent events.SNSEvent) {
 
+    info := LineInfo{
+            Token:   os.Getenv("TOKEN"),
+            Debug:   getBoolEnv("DEBUG"),
+        }
+
     for _, record := range snsEvent.Records {
         snsRecord := record.SNS
 
-        info := LineInfo{
-            Token:   os.Getenv("TOKEN"),
-            Message: convertMessage(snsRecord.Message),
-            Debug:   getBoolEnv("DEBUG"),
-        }
+        info.Message = convertMessage(snsRecord.Message)
 
         if err := send(info); err != nil {
             log.Fatal(err.Error())
@@ -59,11 +63,20 @@ func handler(ctx context.Context, snsEvent events.SNSEvent) {
 }
 
 func convertMessage(msg string) string {
-
-    var codeMsg codeDeployReturn
-    json.Unmarshal([]byte(msg), &codeMsg)
-    if m, err := json.MarshalIndent(codeMsg, "", "\t"); err == nil {
-        return string(m)
+    codeMsg := codeDeployReturn{}
+    if err := json.Unmarshal([]byte(msg), &codeMsg); err != nil {
+        log.Fatal(err.Error())
+        return msg
+    } else {
+            region := *codeMsg.Region
+            codeMsg.Region = nil
+            codeMsg.Url = "https://" +
+                          region +
+                          ".console.aws.amazon.com/codesuite/codedeploy/deployments/" +
+                          codeMsg.DeploymentId
+        if m, err := json.MarshalIndent(codeMsg, "", "\r"); err == nil {
+            return string(m)
+        }
     }
     return ""
 }
