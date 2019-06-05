@@ -65,7 +65,7 @@ func handler(ctx context.Context, snsEvent events.SNSEvent) {
 func convertMessage(msg string) string {
     codeMsg := codeDeployReturn{}
     if err := json.Unmarshal([]byte(msg), &codeMsg); err != nil {
-        log.Fatal(err.Error())
+        log.Println(err.Error())
         return msg
     } else {
             region := *codeMsg.Region
